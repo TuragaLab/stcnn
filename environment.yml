@@ -1,0 +1,14 @@
+name: stcnn
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - torchvision
+  - pytorch
+  - jupyterlab
+  - matplotlib
+  - hydra-core
+  - natsort
+  - celluloid
+  - ffmpeg
+prefix: /groups/card/home/klapoetken/miniconda3/envs/stcnn

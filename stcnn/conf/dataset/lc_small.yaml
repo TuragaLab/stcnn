@@ -1,0 +1,12 @@
+name: lc_small
+ca_path: /groups/card/cardlab/klapoetken/optic_glomeruli/data/split_dataset/ca_traces_split_small/
+mov_path: /groups/card/cardlab/klapoetken/optic_glomeruli/data/full_dataset/mov_rect_1dpp/
+
+sampling_rate: 180 # Hz
+avg_xTrials: True # option to average across multiple trials per stimulus, neuron
+
+mov_res: 1 # degrees per pixel
+mov_bg_int: 0.498
+
+loss_meas_t_start: -0.5 # stimulus onset at t=0, loss_meas_t_start=-2 means loss calculation begins at 2 sec before stim onset
+num_t_pts_prepad: 360 # number of frames to pad before movie and traces

@@ -1,0 +1,107 @@
+# photoreceptor layer configurations
+# for a 83x83 pixels (row x col) input movie, pr downsamples to 21x21 pixels
+
+
+pr:
+  config_type: photoreceptor # configuration name, must match config option in util_setup
+  layer_name: photoreceptor # name in torch.nn.module
+  in_channels: [1] # number of channels in movie input, code only supports 1 right now
+  out_channels: [1]  # number of pr output channels, code only supports 1 right now
+  ds_input: [1, 1] # (degrees) input movie implicit lattice spacing between neighboring pixels along (row, col)
+  pr_sigma: [5, 5] # (degrees) photoreceptor acceptance angle along (row, col)
+  x_kernel_size: [35, 35] # 2D gaussian kernel size along (row, col)
+  x_stride: [4, 4] # spatial kernel stride length along (row, col)
+  x_padding: [17, 17] # spatial kernel padding along (row, col)
+  tau: 0.006 # (seconds) time constant of photoreceptor low-pass filter
+  movie_bg_intensity: 0.498 # average background intensity of input movie
+  t_kernel_size: 90 # num of time points, small window because tau is small
+
+network:
+  config_type: spatiotemporal_exp
+  layer_name: hidden_layer
+  in_channels: [1] # only need to specify the first layer, rest will be determined by out_channels
+  out_channels: [10,10,10,10] # number of items here determine # of hidden layers
+  x_kernel_size: [7,7,7,7] # assume square kernels, specify kernel size for each layer. size=7 is ~28deg in visual space
+  x_stride: [1,1,1,1] # feature map is already in single column resolution, should just do stride=1
+  x_padding: [3,3,3,3] # pad to get same size from input to output. x_kernel_size // 2 + 1
+  tau_init: [-2, -0.8] # (low, high) range for param tau in temporal kernel. this is the exponent. real tau range is 10^(range). e.g. for -2, 10^-2 = 0.01 seconds, or tau ~ 10 ms
+  activation: ["identity", "leaky_relu", "leaky_relu", "leaky_relu"]  # list of string corresponding to activation function listed in activation_factory method in model_factory
+  t_kernel_size: 900 # num of time points
+  init_amplitude_scale: 0.01 # ad hoc adjustment for amplitude, this only initial x_weight scale
+
+lobula:
+  config_type: spatiotemporal_exp
+  layer_name: lc_layer
+  in_channels: [] # [network_config["out_channels"][-1]] # generate during runtime
+  out_channels: [1] # only one output per cell type
+  lc_types: [] # list_lc_name,  # list of LC names/types found in the dataloader, generate during runtime
+  lc_count: [] # list_lc_count # list of neurons per lc type found in the dataloader, generate during runtime
+  x_kernel_size: [] # list_x_kernel_size # list of x_kernel_size list [row,col], generate during runtime
+  x_stride: [] # list_x_stride # list of x_stride list, generate during runtime
+  x_padding: [] # list_x_padding # list of x_padding list, generate during runtime
+  tau_init: [-2, -0.8] # (low, high) range for param tau in temporal kernel. this is the exponent. real tau range is 10^(range). e.g. for -2, 10^-2 = 0.01 seconds, or tau ~ 10 ms
+  activation: "leaky_relu"
+  t_kernel_size: 900 # num of time points
+  init_amplitude_scale: 0.01 # ad hoc adjustment for amplitude, this only initial x_weight scale
+  bias_init: [-0.01, 0] # (low, high) range for bias initialization
+
+ca:
+  config_type: gcamp
+  gcamp_tau: [0.4, 0.4] # (low, high) in seconds. gcamp time constants are around 200-400ms, depending on variant. this is a learnable param b/c experiments may use different calcium indicators. for now, there is only one tau per lc type, probably need more data if we want to customize per indicatory type but all of my experiments are done w/ gc6f anyways
+  alpha_init: [0.001, 0.005] # (low, high) affine transform for v-to-Ca, F.softplus(alpha)*(Ca)+beta
+  beta_init: [-0.001, 0.001] # (low, high) affine transform for v-to-Ca, F.softplus(alpha)*(Ca)+beta
+  activation: "elu"
+  cell_types: [] # list_lc_name, list of LC names/types found in the dataloader, generate during runtime
+  cell_count: [] # list_lc_count # list of neurons per lc type found in the dataloader, generate during runtime
+  use_global_ca_tau: True
+  t_kernel_size: 900 # num of time points
+
+lc4:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc11:
+  x_kernel_size: [11,11] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [5,5] # [row, col]
+
+lc12:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc15:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc17:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc18:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc21:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lc25:
+  x_kernel_size: [11,11] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [5,5] # [row, col]
+
+lplc1:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
+
+lplc2:
+  x_kernel_size: [9,9] # [row, col]
+  x_stride: [9,9] # [row, col]
+  x_padding: [4,4] # [row, col]
