@@ -203,14 +203,6 @@ class _SpatiotemporalLayerBase(torch.nn.Module):
         """
         return self.name
 
-        """
-        expect user to supply appropriate x weights and tau
-        to simulate photoreceptor gaussian spatial sampling and temporal lowpass
-
-        save additional parameter info as specified in
-        util_conv, kernel_gauss_photoreceptor method
-        """
-
 
 class STlayerPhotoreceptor(_SpatiotemporalLayerBase):
     """photoreceptor spatiotemporal conv layer"""
